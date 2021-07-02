@@ -15,13 +15,13 @@ import { NumberContainer } from '../components/NumberContainer'
 import Colors from '../constants/colors'
 
 export const StartGameScreen = props => {
-  const [enteredValue, setEnteredValue] = useState(''); // even if the input is a number, as in this case, it is read as a string.
+  const [enteredValue, setEnteredValue] = useState(''); // even if the input is a number it is read as a string.
 const [confirmedInput, setConfirmedInput] = useState(false);
 const [selectedNumber, setSelectedNumber] = useState();
 let confirmedOutput;
 
   const inputHandler = inputText => {
-    setEnteredValue(inputText.replace(/[^0-9]/g, '')); // validate input so to make sure user can only enter number values
+    setEnteredValue(inputText.replace(/[^0-9]/g, '')); // validate input only number values
   };
 
   const resetInputHandler = () => {
@@ -56,7 +56,7 @@ let confirmedOutput;
       <Card style={styles.numberOutputContainer}>
         <Text> Your selected number:</Text>
         <NumberContainer>{selectedNumber}</NumberContainer>
-        <Button title='Start game'/>
+        <Button title='Start game'onPress={() => props.onStartGame(selectedNumber)}/>
       </Card> 
     ); 
   };
