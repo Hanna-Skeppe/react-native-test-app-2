@@ -27,13 +27,13 @@ export const GameScreen = props => {
   const currentLow = useRef(1);
   const currentHigh = useRef(100);
 
-  const { userChoice, onGameOver } = props; //object destructuring to make props into variables
+  const { userChoice, onGameOver } = props; //object destructuring to make props into constants
 
   useEffect(() => {
-    if (currentGuess === props.userChoice) {
-      props.onGameOver(rounds);
+    if (currentGuess === userChoice) {
+      onGameOver(rounds);
     }
-  }, [currentGuess, userChoice]); // I removed onGameOver as a dependency since I don't think it needs to be there. Not sure, but it seems to work as before.
+  }, [currentGuess, userChoice]); // don't think I have to include onGameOver in dependencies, since I only need useEffect to run when either currentGuess || userChoice changes.
 
   const guessHandler = direction => {
     if ((direction === 'lower' && currentGuess < props.userChoice)
