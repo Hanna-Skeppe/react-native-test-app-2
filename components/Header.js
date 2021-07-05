@@ -6,8 +6,8 @@ import Colors from '../constants/colors';
 
 export const Header = props => {
   return (
-    <View style ={styles.header}>
-        <TitleText>{props.title}</TitleText>
+    <View style={styles.header}>
+        <TitleText style={styles.headerText}>{props.title}</TitleText>
     </View>
   )
 }
@@ -15,10 +15,15 @@ export const Header = props => {
 const styles = StyleSheet.create({
   header: {
     width: '100%',
-    height: 90,
-    paddingTop: 36,
+    height: 100,
+    paddingTop: 32,
+    paddingBottom: 12,
     backgroundColor: Colors.primary,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
+  headerText: {
+    color: 'white',
+    fontSize: 26
+  }
 });

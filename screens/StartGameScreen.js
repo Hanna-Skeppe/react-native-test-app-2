@@ -9,10 +9,12 @@ import {
   Alert
 } from 'react-native';
 
-import { Card } from '../components/Card'
-import { Input } from '../components/Input'
-import { NumberContainer } from '../components/NumberContainer'
-import { BodyText } from '../components/BodyText'
+import { Card } from '../components/Card';
+import { Input } from '../components/Input';
+import { NumberContainer } from '../components/NumberContainer';
+import { BodyText } from '../components/BodyText';
+import { TitleText } from '../components/TitleText';
+import { MainButton } from '../components/MainButton';
 import Colors from '../constants/colors'
 
 export const StartGameScreen = props => {
@@ -57,7 +59,9 @@ let confirmedOutput;
       <Card style={styles.numberOutputContainer}>
         <BodyText> Your selected number:</BodyText>
         <NumberContainer>{selectedNumber}</NumberContainer>
-        <Button title='Start game'onPress={() => props.onStartGame(selectedNumber)}/>
+        <MainButton onPress={() => props.onStartGame(selectedNumber)}>
+        START GAME
+        </MainButton>
       </Card> 
     ); 
   };
@@ -67,7 +71,7 @@ let confirmedOutput;
       Keyboard.dismiss();
     }}>
       <View style={styles.screen}>
-        <Text style={styles.title}>Start a new game</Text>
+        <TitleText style={styles.title}>Start a new game</TitleText>
         <Card style={styles.inputContainer}>
           <BodyText>Select a number</BodyText>
           <Input
@@ -112,9 +116,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'yellow'
   },
   title: {
-    fontSize: 18,
-    marginVertical: 10,
-    fontFamily: 'open-sans-bold'
+    marginTop: 20,
+    marginBottom: 15,
   },
   inputContainer: {
     width: 300,
@@ -125,10 +128,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-between',
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   button: {
-    width: '42%'
+    width: '42%',
   },
   input: {
     width: '40%',
