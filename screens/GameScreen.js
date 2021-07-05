@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
-  Text,
   ScrollView,
+  FlatList,
   StyleSheet,
   Alert,
 } from 'react-native';
@@ -10,8 +10,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { NumberContainer } from '../components/NumberContainer';
 import { Card } from '../components/Card';
+import { BodyText } from '../components/BodyText';
 import { TitleText } from '../components/TitleText';
 import { MainButton } from '../components/MainButton';
+import Colors from '../constants/colors'
 
 // function to generate a random number between a min and a max the computer guesses:
 const generateRandomBetween = (min, max, exclude) => {
@@ -20,6 +22,14 @@ const generateRandomBetween = (min, max, exclude) => {
   const randomNum = Math.floor(Math.random() * (max - min)) + min; // gives a random num between min and max
   return (randomNum === exclude) ? generateRandomBetween(min, max, exclude) : randomNum;
 };
+
+const renderListItem = (guessValue, guessRound) => (
+  <View key={guessValue} style={styles.listItem}>
+    <BodyText style={styles.listText}>Guess #{guessRound}</BodyText>
+    <BodyText style={styles.listText}>{guessValue}</BodyText>
+  </View>
+);
+
 
 export const GameScreen = props => {
   const initialGuess = generateRandomBetween(1, 100, props.userChoice)
@@ -76,9 +86,12 @@ export const GameScreen = props => {
           <Ionicons name='md-add' size={24} color='white'/>
         </MainButton>
       </Card>
-      <ScrollView> 
-        {pastGuesses.map((guess) => <View key={guess}><Text>{guess}</Text></View>)}
-      </ScrollView>
+      <View style={styles.listView}> 
+        <ScrollView contentContainerStyle={styles.listContent}> 
+          {pastGuesses.map((guess, index) => renderListItem(guess, pastGuesses.length - index))}
+        </ScrollView>
+        {/* <FlatList keyExtractor={(item) => item} data={pastGuesses} renderItem={renderListItem}> </FlatList> */}
+      </View>
     </View>
   )
 };
@@ -99,5 +112,34 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: 300,
     maxWidth: '80%'
+  },
+  listView: {
+    flex: 1, // without this on the wrapping View around the ScrollView, the scroll don't work on android
+    width: '80%',
+  },
+  listContent: {
+    flexGrow: 1, // To be able to scroll and have list-items appear from bottom and upwards.
+    alignItems: 'center',
+    justifyContent: 'flex-end'
+  },
+  listItem: {
+    flexDirection: 'row',
+    borderColor: 'lightgrey',
+    borderWidth:1,
+    borderRadius: 10,
+    elevation: 8, //only android
+    shadowColor: '#000000', //only ios
+    shadowOffset: { width: 0, height: 2},
+    shadowRadius: 6,
+    shadowOpacity: 0.3,
+    padding: 15,
+    margin: 15,
+    backgroundColor: 'white',
+    justifyContent: 'space-around',
+    width: '60%'
+  },
+  listText: {
+    color: Colors.secondary,
+    fontSize: 18
   }
 });
