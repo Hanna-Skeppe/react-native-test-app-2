@@ -14,13 +14,10 @@ import { TitleText } from '../components/TitleText';
 import { MainButton } from '../components/MainButton';
 
 // function to generate a random number between a min and a max the computer guesses:
-// I need to adjust this function so that the computer does not generate the same ramdom number-guess more than once. So maybe store previous guesses in an array and check that current guess isn't included in that array?
-
 const generateRandomBetween = (min, max, exclude) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   const randomNum = Math.floor(Math.random() * (max - min)) + min; // gives a random num between min and max
-  //Refactored to ternary 
   return (randomNum === exclude) ? generateRandomBetween(min, max, exclude) : randomNum;
 };
 
@@ -64,9 +61,7 @@ export const GameScreen = props => {
 
     const nextNumber = generateRandomBetween(currentLow.current, currentHigh.current, currentGuess);
     setCurrentGuess(nextNumber);
-    //setRounds(rounds + 1);
-    setPastGuesses([nextNumber, ...pastGuesses]); //if not working try line below instead:
-    //setPastGuesses(currPastGuesses => [nextNumber, ...currPastGuesses])
+    setPastGuesses([nextNumber, ...pastGuesses]);
   };
 
   return (
@@ -83,7 +78,6 @@ export const GameScreen = props => {
       </Card>
       <ScrollView> 
         {pastGuesses.map((guess) => <View key={guess}><Text>{guess}</Text></View>)}
-        {/* Removed index as a key in the map*/}
       </ScrollView>
     </View>
   )
