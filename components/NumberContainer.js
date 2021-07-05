@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'white'
   },
   number: {
     color: Colors.secondary,

@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
-  ScrollView,
   FlatList,
   StyleSheet,
   Alert,
@@ -23,10 +22,10 @@ const generateRandomBetween = (min, max, exclude) => {
   return (randomNum === exclude) ? generateRandomBetween(min, max, exclude) : randomNum;
 };
 
-const renderListItem = (guessValue, guessRound) => (
-  <View key={guessValue} style={styles.listItem}>
-    <BodyText style={styles.listText}>Guess #{guessRound}</BodyText>
-    <BodyText style={styles.listText}>{guessValue}</BodyText>
+const renderListItem = (listLength, itemData) => (
+  <View style={styles.listItem}>
+    <BodyText style={styles.listText}>Guess #{listLength - itemData.index}</BodyText>
+    <BodyText style={styles.listText}>{itemData.item}</BodyText>
   </View>
 );
 
@@ -35,7 +34,7 @@ export const GameScreen = props => {
   const initialGuess = generateRandomBetween(1, 100, props.userChoice)
   // State for the current guess of computer:
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
-  const [pastGuesses, setPastGuesses] = useState([initialGuess]);
+  const [pastGuesses, setPastGuesses] = useState([initialGuess.toString()]);
   // useRef is used to preserve a value over mutiple re-renders (the values can change but is not re-rendered when the component re-renders). These values get updated in the guessHandler-function below.
   const currentLow = useRef(1);
   const currentHigh = useRef(100);
@@ -71,7 +70,7 @@ export const GameScreen = props => {
 
     const nextNumber = generateRandomBetween(currentLow.current, currentHigh.current, currentGuess);
     setCurrentGuess(nextNumber);
-    setPastGuesses([nextNumber, ...pastGuesses]);
+    setPastGuesses([nextNumber.toString(), ...pastGuesses]);
   };
 
   return (
@@ -87,10 +86,12 @@ export const GameScreen = props => {
         </MainButton>
       </Card>
       <View style={styles.listView}> 
-        <ScrollView contentContainerStyle={styles.listContent}> 
-          {pastGuesses.map((guess, index) => renderListItem(guess, pastGuesses.length - index))}
-        </ScrollView>
-        {/* <FlatList keyExtractor={(item) => item} data={pastGuesses} renderItem={renderListItem}> </FlatList> */}
+        <FlatList 
+          keyExtractor={(item) => item} 
+          data={pastGuesses}
+          renderItem={renderListItem.bind(this, pastGuesses.length)} 
+          contentContainerStyle={styles.listContent}
+        />
       </View>
     </View>
   )
@@ -101,6 +102,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     alignItems: 'center',
+    backgroundColor: Colors.background,
   },
   title: {
     marginTop: 20,
@@ -111,7 +113,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginTop: 20,
     width: 300,
-    maxWidth: '80%'
+    maxWidth: '80%',
   },
   listView: {
     flex: 1, // without this on the wrapping View around the ScrollView, the scroll don't work on android

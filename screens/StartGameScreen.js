@@ -14,7 +14,7 @@ import { NumberContainer } from '../components/NumberContainer';
 import { BodyText } from '../components/BodyText';
 import { TitleText } from '../components/TitleText';
 import { MainButton } from '../components/MainButton';
-import Colors from '../constants/colors'
+import Colors from '../constants/colors';
 
 export const StartGameScreen = props => {
   const [enteredValue, setEnteredValue] = useState(''); // even if the input is a number it is read as a string.
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     alignItems: 'center',
-    backgroundColor: 'yellow'
+    backgroundColor: Colors.background,
   },
   title: {
     marginTop: 20,
