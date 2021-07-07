@@ -5,7 +5,10 @@ import {
   Button,
   TouchableWithoutFeedback,
   Keyboard,
-  Alert
+  Alert,
+  Dimensions, //object that tells available width/height of device (useful for responsive styling)
+  ScrollView,
+  KeyboardAvoidingView, // need this to make sure the keyboard doesn't overlay the input I want to type (see comment below on Input regarding Android)
 } from 'react-native';
 
 import { Card } from '../components/Card';
@@ -18,9 +21,10 @@ import Colors from '../constants/colors';
 
 export const StartGameScreen = props => {
   const [enteredValue, setEnteredValue] = useState(''); // even if the input is a number it is read as a string.
-const [confirmedInput, setConfirmedInput] = useState(false);
-const [selectedNumber, setSelectedNumber] = useState();
-let confirmedOutput;
+  const [confirmedInput, setConfirmedInput] = useState(false);
+  const [selectedNumber, setSelectedNumber] = useState();
+
+  let confirmedOutput;
 
   const inputHandler = inputText => {
     setEnteredValue(inputText.replace(/[^0-9]/g, '')); // validate input only number values
@@ -33,13 +37,13 @@ let confirmedOutput;
 
   const confirmInputHandler = () => {
     const chosenNumber = parseInt(enteredValue);
-    if (isNaN(chosenNumber) || chosenNumber <= 0 || chosenNumber > 99) {
+    if (isNaN(chosenNumber) || chosenNumber <= 0 || chosenNumber > 99) {
       Alert.alert(
-        "Invalid input", 
-        "Please enter a number between 1-99.", 
+        "Invalid input",
+        "Please enter a number between 1-99.",
         [
-          { 
-            text: 'Ok, got it!', 
+          {
+            text: 'Ok, got it!',
             style: 'cancel',
             onPress: resetInputHandler
           }
@@ -59,51 +63,55 @@ let confirmedOutput;
         <BodyText> Your selected number:</BodyText>
         <NumberContainer>{selectedNumber}</NumberContainer>
         <MainButton onPress={() => props.onStartGame(selectedNumber)}>
-        START GAME
+          START GAME
         </MainButton>
-      </Card> 
-    ); 
+      </Card>
+    );
   };
 
   return (
-    <TouchableWithoutFeedback onPress={() => {
-      Keyboard.dismiss();
-    }}>
-      <View style={styles.screen}>
-        <TitleText style={styles.title}>Start a new game</TitleText>
-        <Card style={styles.inputContainer}>
-          <BodyText>Select a number</BodyText>
-          <Input
-            style={styles.input}
-            //blurOnSubmit
-            autoCapitalize='none'
-            autoCorrect={false}
-            keyboardType='phone-pad'
-            //keyboardType='numeric' || 'number-pad'// does not work with expo on my phone (shows letters also)
-            maxLength={2}
-            onChangeText={inputHandler}
-            value={enteredValue}
-          />
-          <View style={styles.buttonContainer}>
-            <View style={styles.button}>
-              <Button
-                title="Reset"
-                color={Colors.secondary}
-                onPress={resetInputHandler}
+    <ScrollView>
+      <KeyboardAvoidingView behaviour='position' keyboardVerticalOffset={30}> 
+        <TouchableWithoutFeedback onPress={() => {
+          Keyboard.dismiss();
+        }}>
+          <View style={styles.screen}>
+            <TitleText style={styles.title}>Start a new game</TitleText>
+            <Card style={styles.inputContainer}>
+              <BodyText>Select a number</BodyText>
+              <Input
+                style={styles.input}
+                blurOnSubmit
+                autoCapitalize='none'
+                autoCorrect={false}
+                keyboardType='phone-pad' //keyboardType='numeric' || 'number-pad'// does not work with expo on my phone (shows letters also). Therefore I use 'phone-pad' here.
+                disableFullscreenUI={true} // to prevent the keyboard to go fullscreen on Android in landscape-mode. (the KeyboardAvoidingView-settings apply instead)
+                maxLength={2}
+                onChangeText={inputHandler}
+                value={enteredValue}
               />
-            </View>
-            <View style={styles.button}>
-              <Button
-                title="Confirm"
-                color={Colors.primary}
-                onPress={confirmInputHandler}
-              />
-            </View>
+              <View style={styles.buttonContainer}>
+                <View style={styles.button}>
+                  <Button
+                    title="Reset"
+                    color={Colors.secondary}
+                    onPress={resetInputHandler}
+                  />
+                </View>
+                <View style={styles.button}>
+                  <Button
+                    title="Confirm"
+                    color={Colors.primary}
+                    onPress={confirmInputHandler}
+                  />
+                </View>
+              </View>
+            </Card>
+            {confirmedOutput}
           </View>
-        </Card>
-        {confirmedOutput}
-      </View>
-    </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </ScrollView>
   )
 };
 
@@ -119,8 +127,9 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   inputContainer: {
-    width: 300,
-    maxWidth: '80%',
+    width: '80%',
+    maxWidth: '95%',
+    minWidth: 300,
     alignItems: 'center',
   },
   buttonContainer: {
@@ -130,7 +139,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   button: {
-    width: '42%',
+    width: Dimensions.get('window').width / 4 // a 4th of the device width. NOTE! This is calculated on app start and therefor doesn't adjust when changing screen-orientation! This needs to be managed by useState.
   },
   input: {
     width: '40%',

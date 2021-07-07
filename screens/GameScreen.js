@@ -4,6 +4,7 @@ import {
   FlatList,
   StyleSheet,
   Alert,
+  Dimensions // RN object to use for responsiveness to check dimensions of screen.
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -111,13 +112,14 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 20,
+    marginTop: Dimensions.get('window').height > 600 ? 20 : 10,
     width: 300,
     maxWidth: '80%',
   },
   listView: {
     flex: 1, // without this on the wrapping View around the ScrollView, the scroll don't work on android
-    width: '80%',
+    //width: '80%',
+    width: Dimensions.get('window').width > 360 ? '90%' : '100%',
   },
   listContent: {
     flexGrow: 1, // To be able to scroll and have list-items appear from bottom and upwards.
@@ -135,10 +137,11 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOpacity: 0.3,
     padding: 15,
-    margin: 15,
+    marginVertical: 15,
     backgroundColor: 'white',
     justifyContent: 'space-around',
-    width: '60%'
+    width: 300,
+    maxWidth: '80%',
   },
   listText: {
     color: Colors.secondary,
