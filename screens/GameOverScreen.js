@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   View,
-  ScrollView, // It does not work for me to wrap it in a scrollview. The screen gets a white cut-off at the bottom and no scroll. Why?
+  ScrollView,
   Image,
   Text,
   StyleSheet,

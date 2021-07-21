@@ -37,10 +37,23 @@ export const GameScreen = props => {
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
   const [pastGuesses, setPastGuesses] = useState([initialGuess.toString()]);
   // useRef is used to preserve a value over mutiple re-renders (the values can change but is not re-rendered when the component re-renders). These values get updated in the guessHandler-function below.
+  //const [availableDeviceWidth, setAvailableDeviceWidth] = useState(Dimensions.get('window').width); // not in use right now
+  const [availableDeviceHeight, setAvailableDeviceHeight] = useState(Dimensions.get('window').height);
   const currentLow = useRef(1);
   const currentHigh = useRef(100);
 
   const { userChoice, onGameOver } = props; //object destructuring to make props into constants
+
+  useEffect(() => {
+    const updateLayout = () => {
+      //setAvailableDeviceWidth(Dimensions.get('window').width);
+      setAvailableDeviceHeight(Dimensions.get('window').height);
+    };
+    Dimensions.addEventListener('change', updateLayout)
+    return () => { //cleanup function
+      Dimensions.removeEventListener('change', updateLayout);
+    }
+  })
 
   useEffect(() => {
     if (currentGuess === userChoice) {
@@ -73,6 +86,31 @@ export const GameScreen = props => {
     setCurrentGuess(nextNumber);
     setPastGuesses([nextNumber.toString(), ...pastGuesses]);
   };
+
+  if (availableDeviceHeight < 500) {
+    return (
+      <View style={styles.screen}>
+      <TitleText style={styles.title}>Opponent's Guess</TitleText>
+      <View style={styles.controls}> 
+        <MainButton onPress={() => guessHandler('lower')}>
+          <Ionicons name='md-remove' size={24} color='white' />
+        </MainButton>
+        <NumberContainer>{currentGuess}</NumberContainer>
+        <MainButton  onPress={() => guessHandler('higher')}>
+          <Ionicons name='md-add' size={24} color='white'/>
+        </MainButton>
+      </View>
+      <View style={styles.listView}> 
+        <FlatList 
+          keyExtractor={(item) => item} 
+          data={pastGuesses}
+          renderItem={renderListItem.bind(this, pastGuesses.length)} 
+          contentContainerStyle={styles.listContent}
+        />
+      </View>
+    </View>
+    )
+  }
 
   return (
     <View style={styles.screen}>
@@ -116,9 +154,14 @@ const styles = StyleSheet.create({
     width: 300,
     maxWidth: '80%',
   },
+  controls: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: '55%'
+  },
   listView: {
     flex: 1, // without this on the wrapping View around the ScrollView, the scroll don't work on android
-    //width: '80%',
     width: Dimensions.get('window').width > 360 ? '90%' : '100%',
   },
   listContent: {

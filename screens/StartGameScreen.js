@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -23,8 +23,20 @@ export const StartGameScreen = props => {
   const [enteredValue, setEnteredValue] = useState(''); // even if the input is a number it is read as a string.
   const [confirmedInput, setConfirmedInput] = useState(false);
   const [selectedNumber, setSelectedNumber] = useState();
+  const [buttonWidth, setButtonWidth] = useState(Dimensions.get('window').width / 4);
 
   let confirmedOutput;
+
+  useEffect(() => {
+    const updateButtonsLayout = () => {
+      setButtonWidth(Dimensions.get('window').width / 4);
+    };
+    Dimensions.addEventListener('change', updateButtonsLayout);
+    return () => { // cleanup-function
+      Dimensions.removeEventListener('change', updateButtonsLayout);
+    }
+  });
+  
 
   const inputHandler = inputText => {
     setEnteredValue(inputText.replace(/[^0-9]/g, '')); // validate input only number values
@@ -70,8 +82,8 @@ export const StartGameScreen = props => {
   };
 
   return (
-    <ScrollView>
-      <KeyboardAvoidingView behaviour='position' keyboardVerticalOffset={30}> 
+    <ScrollView style={styles.screenWrap}>
+      <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={30}> 
         <TouchableWithoutFeedback onPress={() => {
           Keyboard.dismiss();
         }}>
@@ -91,14 +103,14 @@ export const StartGameScreen = props => {
                 value={enteredValue}
               />
               <View style={styles.buttonContainer}>
-                <View style={styles.button}>
+                <View style={{width: buttonWidth}}>
                   <Button
                     title="Reset"
                     color={Colors.secondary}
                     onPress={resetInputHandler}
                   />
                 </View>
-                <View style={styles.button}>
+                <View style={{width: buttonWidth}}>
                   <Button
                     title="Confirm"
                     color={Colors.primary}
@@ -116,8 +128,11 @@ export const StartGameScreen = props => {
 };
 
 const styles = StyleSheet.create({
+  screenWrap: {
+    backgroundColor: Colors.background,
+  },
   screen: {
-    flex: 1,
+    flex: 1, // why doesn't this view take up the whole screen?
     padding: 10,
     alignItems: 'center',
     backgroundColor: Colors.background,
@@ -138,9 +153,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 15,
   },
-  button: {
-    width: Dimensions.get('window').width / 4 // a 4th of the device width. NOTE! This is calculated on app start and therefor doesn't adjust when changing screen-orientation! This needs to be managed by useState.
-  },
+  // button: {
+  //   width: Dimensions.get('window').width / 4 // a 4th of the device width. NOTE! This is calculated on app start and therefore doesn't adjust when changeing screen-orientation! This needs to be managed by useState.
+  // },
   input: {
     width: '40%',
     textAlign: 'center'
